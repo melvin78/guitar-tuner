@@ -1,0 +1,9 @@
+.svg-background{
+  background-image: url("~/assets/images/Hexagon.svg");
+  overflow-x: hidden;
+  background-repeat: no-repeat;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
+  background-size: cover;
+
+}
