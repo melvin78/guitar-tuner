@@ -13,12 +13,13 @@
               class="text-blue-600 hover:text-blue-400" href="https://www.instagram.com/mel.o._">guitarist </a>myself...."<br></span>
             This is for my fellow musical guitarist friends that struggle with tuning their instruments by ear.
             <span class="font-extralight italic">Lol, me included.</span></p>
+          <p class="flex justify-center text-gray-200 mt-2 text-3xl">Current Pitch is {{GetNoteName}}.</p>
         </div>
         <div class="lg:w-2/3 mx-auto">
           <div class="flex flex-wrap w-full py-2 px-10 relative ">
 
 
-            <svg  viewBox="0 0 732 548" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 732 548" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="Group 7">
                 <g id="layer1">
                   <g id="perfect-E-two">
@@ -335,18 +336,25 @@ import {gsap} from "gsap";
 export default {
   name: "TunerComponent",
 
-  data(){
-    return{
-      CurrentPitch:0
+  data() {
+    return {
+      CurrentPitch: 0,
+      NoteName :"",
     }
   },
 
 
-  computed:{
+  computed: {
     // a perfect E has a pitch of 82.4 we then do a plus or minus one to accomodate for rounding errors
 
+    GetNoteName(){
+      if (this.NoteName === ""){
+        return "Waiting for input...."
+      }
+    },
+
     PerfectLowE: function () {
-      return this.CurrentPitch  === 82 || this.CurrentPitch=== 81 || this.CurrentPitch === 83
+      return this.CurrentPitch === 82 || this.CurrentPitch === 81 || this.CurrentPitch === 83
     },
 
     PerfectA: function () {
@@ -354,49 +362,45 @@ export default {
     },
 
     PerfectD: function () {
-      return this.CurrentPitch  === 147 ||  this.CurrentPitch ===  146 || this.CurrentPitch === 145
+      return this.CurrentPitch === 147 || this.CurrentPitch === 146 || this.CurrentPitch === 145
     },
 
     PerfectG: function () {
-      return this.CurrentPitch  === 195 || this.CurrentPitch  ===  196 || this.CurrentPitch === 194
+      return this.CurrentPitch === 195 || this.CurrentPitch === 196 || this.CurrentPitch === 194
     },
 
     PerfectB: function () {
-      return this.CurrentPitch === 247 || this.CurrentPitch  === 246 || this.CurrentPitch === 245
+      return this.CurrentPitch === 247 || this.CurrentPitch === 246 || this.CurrentPitch === 245
     },
 
     PerfectHighE: function () {
-      return this.CurrentPitch  === 330|| this.CurrentPitch === 331|| this.CurrentPitch === 329
+      return this.CurrentPitch === 330 || this.CurrentPitch === 331 || this.CurrentPitch === 329
     }
   },
 
-  methods:{
+  methods: {
 
-    changeCurrentPitch(val){
+    changeCurrentPitch(val) {
       this.CurrentPitch = val
     },
 
-    DetermineRotationAngle(currentPitch){
+    DetermineRotationAngle(currentPitch) {
 
-      if (currentPitch > 82 && currentPitch < 110 ){
+      if (currentPitch > 82 && currentPitch < 110) {
 
         console.log(`answer is ${(110 - currentPitch) * 0.921}`)
         return -(110 - currentPitch) * 0.921
-      }
-
-     if (currentPitch > 110 && currentPitch < 146){
-       console.log(`answer is ${(146 - currentPitch) * 0.694}`)
-       return -(146 - currentPitch) * 0.694
-     }
-
-      if (currentPitch > 196 && currentPitch < 246){
+      } else if (currentPitch > 110 && currentPitch < 146) {
+        console.log(`answer is ${(146 - currentPitch) * 0.694}`)
+        return -(146 - currentPitch) * 0.694
+      } else if (currentPitch > 196 && currentPitch < 246) {
         console.log(`answer is ${(246 - currentPitch) * 0.46}`)
         return (246 - currentPitch) * 0.46
-      }
-
-      if (currentPitch > 246 && currentPitch < 329){
+      } else if (currentPitch > 246 && currentPitch < 329) {
         console.log(`answer is ${(329 - currentPitch) * 0.28}`)
         return (329 - currentPitch) * 0.28
+      } else {
+        return 0
       }
     }
 
@@ -415,30 +419,23 @@ export default {
     const logPitch = function () {
       console.log(tuner.pitch, tuner.noteName)
       vueInstance.CurrentPitch = tuner.pitch
+      vueInstance.NoteName = tuner.noteName
       cogTimeline.to("#POINTER", {
         rotation: function () {
 
-          if (tuner.pitch === 82 || tuner.pitch === 81 || tuner.pitch === 83 ){
+          if (tuner.pitch === 82 || tuner.pitch === 81 || tuner.pitch === 83) {
             return -57.89
-          }
-          else if(tuner.pitch === 110 || tuner.pitch === 111 || tuner.pitch === 109){
+          } else if (tuner.pitch === 110 || tuner.pitch === 111 || tuner.pitch === 109) {
             return -32.1
-          }
-          else if (tuner.pitch === 147 ||  tuner.pitch ===  146 || tuner.pitch === 145){
+          } else if (tuner.pitch === 147 || tuner.pitch === 146 || tuner.pitch === 145) {
             return -7.1
-          }
-          else if (tuner.pitch === 195 || tuner.pitch  ===  196 || tuner.pitch === 194){
+          } else if (tuner.pitch === 195 || tuner.pitch === 196 || tuner.pitch === 194) {
             return 14.1
-          }
-
-          else if (tuner.pitch === 247 || tuner.pitch  === 246 || tuner.pitch === 245){
+          } else if (tuner.pitch === 247 || tuner.pitch === 246 || tuner.pitch === 245) {
             return 37.1
-          }
-
-          else if (tuner.pitch === 330|| tuner.pitch === 331|| tuner.pitch === 329){
+          } else if (tuner.pitch === 330 || tuner.pitch === 331 || tuner.pitch === 329) {
             return 60.89
-          }
-          else{
+          } else {
             return vueInstance.DetermineRotationAngle(tuner.pitch)
           }
         },
