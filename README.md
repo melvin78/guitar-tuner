@@ -1,3 +1,13 @@
+
+<p align="center"><a href="https://price-tracker.webmelvin.me" target="_blank">
+<img src="https://github.com/melvin78/guitar-tuner/blob/master/static/guitar.png?raw=true
+" width="400"></a></p>
+
+
+# Demo
+
+Check out [here](https://guitar-tuner.webmelvin.me)
+
 # Guitar Tuner
 
 With the help of [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
@@ -25,6 +35,20 @@ is in tune and help you adjust accordingly.
 - Ensure you have allowed access for your microphone to be used. Once permission access is allowed
 - You can test if the pitch is being updated accordingly by whistling into your microphone and you
 will see the current pitch being updated.
+
+
+## ScreenShots
+
+Example of An in tune A string being plucked
+
+<img src="https://github.com/melvin78/guitar-tuner/blob/master/blob/img.png?raw=true" alt="here">
+
+Example of out of tune D string being plucked, notice the pointer hasn't moved to indicate that you need to adjust 
+the tuning peg.
+
+<img src="https://github.com/melvin78/guitar-tuner/blob/master/blob/img2.png?raw=true" alt="here">
+
+
 
 ## Installation
 
