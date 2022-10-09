@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://price-tracker.webmelvin.me" target="_blank">
+<p align="center"><a href="https://guitar-tuner.webmelvin.me" target="_blank">
 <img src="https://github.com/melvin78/guitar-tuner/blob/master/blob/guitar.png?raw=true
 " width="400"></a></p>
 
