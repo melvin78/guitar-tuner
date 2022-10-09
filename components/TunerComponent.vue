@@ -8,12 +8,10 @@
                src="/guitar.png"/>
           <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-200">Guitar Tuner</h1>
           <p class="lg:w-2/3 mx-auto leading-relaxed text-base text-white">
-
-            <span class="font-extralight italic">"...you know what am something of a <a
-              class="text-blue-600 hover:text-blue-400" href="https://www.instagram.com/mel.o._">guitarist </a>myself...."<br></span>
-            This is for my fellow musical guitarist friends that struggle with tuning their instruments by ear.
-            <span class="font-extralight italic">Lol, me included.</span></p>
-          <p class="flex justify-center text-gray-200 mt-2 text-3xl">Current Pitch is {{GetNoteName}}.</p>
+            Pluck your guitar string and the current pitch will be updated. If the string is in tune the pointer will
+            rotate to the specified note and the note name will turn green to indicate that the string is in tune.
+          <p class="flex justify-center text-gray-200 mt-2 text-3xl">Current Pitch is <span
+            :class="PerfectNote?'text-green-600 ml-2':'text-yellow-300 ml-2'"> {{ GetNoteName }}</span>.</p>
         </div>
         <div class="lg:w-2/3 mx-auto">
           <div class="flex flex-wrap w-full py-2 px-10 relative ">
@@ -331,7 +329,13 @@
 <script>
 import Wad from 'web-audio-daw';
 import {gsap} from "gsap";
-
+import {
+  CheckIfPerfectA, CheckIfPerfectB,
+  CheckIfPerfectD,
+  CheckIfPerfectG, CheckIfPerfectHighE,
+  CheckIfPerfectLowE,
+  PitchConstants
+} from "@/constants/pitch-constants";
 
 export default {
   name: "TunerComponent",
@@ -339,114 +343,113 @@ export default {
   data() {
     return {
       CurrentPitch: 0,
-      NoteName :"",
+      NoteName: "",
+      PerfectNote: false
     }
   },
 
 
   computed: {
-    // a perfect E has a pitch of 82.4 we then do a plus or minus one to accomodate for rounding errors
 
-    GetNoteName(){
-      if (this.NoteName === ""){
-        return "Waiting for input...."
-      }
+    GetNoteName() {
+      this.PerfectNote = [
+        PitchConstants.LowE,
+        PitchConstants.LowE + 1,
+        PitchConstants.LowE - 1,
+        PitchConstants.A -1 ,
+        PitchConstants.A +1,
+        PitchConstants.A,
+        PitchConstants.D - 1,
+        PitchConstants.D + 1,
+        PitchConstants.D,
+        PitchConstants.G -1,
+        PitchConstants.G + 1,
+        PitchConstants.G,
+        PitchConstants.B + 1,
+        PitchConstants.B - 1 ,
+        PitchConstants.B,
+        PitchConstants.HighE + 1,
+        PitchConstants.HighE - 1,
+        PitchConstants.HighE].includes(this.CurrentPitch)
+      return this.NoteName
     },
 
     PerfectLowE: function () {
-      return this.CurrentPitch === 82 || this.CurrentPitch === 81 || this.CurrentPitch === 83
+      return CheckIfPerfectLowE(this.CurrentPitch)
     },
 
     PerfectA: function () {
-      return this.CurrentPitch === 110 || this.CurrentPitch === 111 || this.CurrentPitch === 109
+      return CheckIfPerfectA(this.CurrentPitch)
     },
 
     PerfectD: function () {
-      return this.CurrentPitch === 147 || this.CurrentPitch === 146 || this.CurrentPitch === 145
+      return CheckIfPerfectD(this.CurrentPitch)
     },
 
     PerfectG: function () {
-      return this.CurrentPitch === 195 || this.CurrentPitch === 196 || this.CurrentPitch === 194
+      return CheckIfPerfectG(this.CurrentPitch)
     },
 
     PerfectB: function () {
-      return this.CurrentPitch === 247 || this.CurrentPitch === 246 || this.CurrentPitch === 245
+      return CheckIfPerfectB(this.CurrentPitch)
     },
 
     PerfectHighE: function () {
-      return this.CurrentPitch === 330 || this.CurrentPitch === 331 || this.CurrentPitch === 329
+      return CheckIfPerfectHighE(this.CurrentPitch)
     }
   },
 
-  methods: {
 
-    changeCurrentPitch(val) {
-      this.CurrentPitch = val
-    },
-
-    DetermineRotationAngle(currentPitch) {
-
-      if (currentPitch > 82 && currentPitch < 110) {
-
-        console.log(`answer is ${(110 - currentPitch) * 0.921}`)
-        return -(110 - currentPitch) * 0.921
-      } else if (currentPitch > 110 && currentPitch < 146) {
-        console.log(`answer is ${(146 - currentPitch) * 0.694}`)
-        return -(146 - currentPitch) * 0.694
-      } else if (currentPitch > 196 && currentPitch < 246) {
-        console.log(`answer is ${(246 - currentPitch) * 0.46}`)
-        return (246 - currentPitch) * 0.46
-      } else if (currentPitch > 246 && currentPitch < 329) {
-        console.log(`answer is ${(329 - currentPitch) * 0.28}`)
-        return (329 - currentPitch) * 0.28
-      } else {
-        return 0
-      }
-    }
-
-  },
 
   mounted: function () {
-    const cogTimeline = gsap.timeline()
+    const guitarTunerTimeline = gsap.timeline()
+
     const voice = new Wad({source: 'mic'});
+
     const tuner = new Wad.Poly();
+
     tuner.setVolume(0);
+
     tuner.add(voice);
+
     voice.play();
+
     tuner.updatePitch()
+
     const vueInstance = this
 
-    const logPitch = function () {
-      console.log(tuner.pitch, tuner.noteName)
+    const detectPitch = function () {
       vueInstance.CurrentPitch = tuner.pitch
-      vueInstance.NoteName = tuner.noteName
-      cogTimeline.to("#POINTER", {
-        rotation: function () {
 
-          if (tuner.pitch === 82 || tuner.pitch === 81 || tuner.pitch === 83) {
-            return -57.89
-          } else if (tuner.pitch === 110 || tuner.pitch === 111 || tuner.pitch === 109) {
-            return -32.1
-          } else if (tuner.pitch === 147 || tuner.pitch === 146 || tuner.pitch === 145) {
-            return -7.1
-          } else if (tuner.pitch === 195 || tuner.pitch === 196 || tuner.pitch === 194) {
-            return 14.1
-          } else if (tuner.pitch === 247 || tuner.pitch === 246 || tuner.pitch === 245) {
-            return 37.1
-          } else if (tuner.pitch === 330 || tuner.pitch === 331 || tuner.pitch === 329) {
-            return 60.89
+      vueInstance.NoteName = tuner.noteName
+
+      guitarTunerTimeline.to("#POINTER", {
+
+        rotation: function () {
+          if (CheckIfPerfectLowE(tuner.pitch)) {
+            return PitchConstants.RotationAngleLowE
+          } else if (CheckIfPerfectA(tuner.pitch)) {
+            return PitchConstants.RotationAngleA
+          } else if (CheckIfPerfectD(tuner.pitch)) {
+            return PitchConstants.RotationAngleD
+          } else if (CheckIfPerfectG(tuner.pitch)) {
+            return PitchConstants.RotationAngleG
+          } else if (CheckIfPerfectB(tuner.pitch)) {
+            return PitchConstants.RotationAngleB
+          } else if (CheckIfPerfectHighE(tuner.pitch)) {
+            return PitchConstants.RotationAngleHighE
           } else {
-            return vueInstance.DetermineRotationAngle(tuner.pitch)
+            return 0
           }
         },
         ease: 'linear',
         transformOrigin: "center bottom",
       })
 
-      requestAnimationFrame(logPitch)
+      requestAnimationFrame(detectPitch)
     };
 
-    logPitch();
+    detectPitch();
 
   }
 }
