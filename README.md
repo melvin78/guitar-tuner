@@ -1,6 +1,6 @@
 
 <p align="center"><a href="https://price-tracker.webmelvin.me" target="_blank">
-<img src="https://github.com/melvin78/guitar-tuner/blob/master/static/guitar.png?raw=true
+<img src="https://github.com/melvin78/guitar-tuner/blob/master/blob/guitar.png?raw=true
 " width="400"></a></p>
 
 
